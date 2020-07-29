@@ -1,0 +1,53 @@
+
+select a.*,b.cod_producto,
+(case when b.cod_producto in(11412) then 'ADS'
+     when b.cod_producto in(11401,11409) then 'COMERCIAL'
+     when b.cod_producto in(11422) then 'CREDICASH'
+     when b.cod_producto in(11410) then 'CREDICHEQUE'
+     when b.cod_producto in(11425) then 'CREDIPERSONAL'
+     when b.cod_producto in(11408) then 'CREDITO AUTOMATICO'
+     when b.cod_producto in(11404) then 'CREDITO REFINANCIADO'
+     when b.cod_producto in(11469) then 'CREDITO ROTATIVO'
+     when b.cod_producto in(11423) then 'ESTUDIO'
+     when b.cod_producto in(11416) then 'EXTRAFINANCIAMIENTO'
+     when b.cod_producto in(11424) then 'INTEGRAL'
+     when b.cod_producto in(12497) then 'LEASING'
+     when b.cod_producto in(11468) then 'MAXNOMINA'
+     when b.cod_producto in(11421) then 'POPULAR'
+     when b.cod_producto in(11411) then 'SOBREGIRO'
+     when b.cod_producto in(11461,11462,11463,11464,11465,11466,11467,11475,11476,11477,11499) then 'TARJETA DE CREDITO'
+     when b.cod_producto in(11402) then 'VEHICULO'
+     when b.cod_producto in(11403) then 'VIVIENDA'
+     else 'OTRO' end) as producto,c.nsegmento,c.nsubsegmento,c.flag_vp
+from
+proceso_bana_vbpymp.tabla_detalle_plan_pagos a  
+left join proceso_bana_vbpymp.cliente_360  c on  c.cifcodcliente=a.cliente and c.fechames in(202003)
+left join proceso_bana_vbpymp.saldos_final  b on b.referencia=a.referencia  and b.fecha=last_day(a.fecha_diaria)
+where month(fecha_diaria)<(select month(max(fecha)) from proceso_bana_vbpymp.saldos_final )
+union all
+select a.*,b.cod_producto,
+(case when b.cod_producto in(11412) then 'ADS'
+     when b.cod_producto in(11401,11409) then 'COMERCIAL'
+     when b.cod_producto in(11422) then 'CREDICASH'
+     when b.cod_producto in(11410) then 'CREDICHEQUE'
+     when b.cod_producto in(11425) then 'CREDIPERSONAL'
+     when b.cod_producto in(11408) then 'CREDITO AUTOMATICO'
+     when b.cod_producto in(11404) then 'CREDITO REFINANCIADO'
+     when b.cod_producto in(11469) then 'CREDITO ROTATIVO'
+     when b.cod_producto in(11423) then 'ESTUDIO'
+     when b.cod_producto in(11416) then 'EXTRAFINANCIAMIENTO'
+     when b.cod_producto in(11424) then 'INTEGRAL'
+     when b.cod_producto in(12497) then 'LEASING'
+     when b.cod_producto in(11468) then 'MAXNOMINA'
+     when b.cod_producto in(11421) then 'POPULAR'
+     when b.cod_producto in(11411) then 'SOBREGIRO'
+     when b.cod_producto in(11461,11462,11463,11464,11465,11466,11467,11475,11476,11477,11499) then 'TARJETA DE CREDITO'
+     when b.cod_producto in(11402) then 'VEHICULO'
+     when b.cod_producto in(11403) then 'VIVIENDA'
+     else 'OTRO' end) as producto,c.nsegmento,c.nsubsegmento,c.flag_vp
+from
+proceso_bana_vbpymp.tabla_detalle_plan_pagos a  
+left join proceso_bana_vbpymp.cliente_360  c on  c.cifcodcliente=a.cliente and c.fechames in(202003)
+left join (SELECT * FROM proceso_bana_vbpymp.saldos_final WHERE FECHA in(select max(fecha) from proceso_bana_vbpymp.saldos_final ) 
+         ) b on b.referencia=a.referencia  and last_day(fecha)=last_day(a.fecha_diaria)
+where month(fecha_diaria) in(select month(max(fecha)) from proceso_bana_vbpymp.saldos_final )
